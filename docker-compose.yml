@@ -1,0 +1,29 @@
+#this should be a docker-compose file for getting influxdb running with exposed host, port, user and password as environment variables
+
+version: '3.9'
+
+networks:
+  influxdb:
+    driver: bridge
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - 8086:8086
+    security_opt:
+      - no-new-privileges:true
+    environment:
+    - DOCKER_INFLUXDB_INIT_MODE=setup
+    - DOCKER_INFLUXDB_INIT_USERNAME=my-user
+    - DOCKER_INFLUXDB_INIT_PASSWORD=my-password
+    - DOCKER_INFLUXDB_INIT_ORG=my-org
+    - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+    - DOCKER_INFLUXDB_INIT_RETENTION=1w
+    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    volumes:
+      - $DOCKERDIR/appdata/influxdb/config:/etc/influxdb2
+      - $DOCKERDIR/appdata/influxdb/db:/var/lib/influxdb2
+    networks:
+      - influxdb
